@@ -6,7 +6,7 @@ recent songs people have been listening to.
 
 # Wireframe and Site Map
 ![alt
-text](https://github.com/nyu-csci-ua-0480-001-fall-2016/dgl264-final-project/blob/master/img/wireframe.JPG)
+text](https://github.com/nyu-csci-ua-0480-001-fall-2016/dgl264-final-project/blob/master/projImg/wireframe.JPG)
 
 # Requirements
 - Spotify API (+5)
