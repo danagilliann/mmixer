@@ -1,0 +1,69 @@
+.creator {
+  position: absolute;
+  bottom: 0%;
+  right: 5%;
+  text-align: right; }
+
+.login {
+  width: 250px;
+  background: transparent;
+  border-style: solid;
+  border-width: 3px;
+  border-color: #32d9b1; }
+
+.login-link {
+  border: none; }
+
+.login-text {
+  text-align: center;
+  color: #32d9b1; }
+
+@media screen and (max-width: 530px) {
+  .title {
+    font-size: 30px; } }
+
+#players {
+  text-align: center; }
+
+.player {
+  margin: 30px;
+  border: none; }
+
+svg {
+  overflow: visible; }
+
+.genres {
+  margin-top: 15em;
+  text-align: center;
+  margin-bottom: 1100px; }
+
+.genre-text {
+  display: inline;
+  padding: 20px; }
+
+body {
+  padding: 50px;
+  color: white;
+  background-color: black; }
+
+a {
+  color: #32d9b1;
+  text-decoration: none;
+  border-bottom-style: dotted;
+  border-bottom-width: thin; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Poppins", sans-serif;
+  text-align: center; }
+
+h1 {
+  font-size: 70px; }
+
+p {
+  font-family: "Droid Sans Mono", monospace; }
+
+button {
+  background: transparent;
+  border-style: solid;
+  border-width: 3px;
+  border-color: #32d9b1; }

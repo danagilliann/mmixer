@@ -1,0 +1,139 @@
+var express = require('express');
+var router = express.Router();
+var config = require('config.json')('./config.json');
+var client_id = config.client_id;
+var client_secret = config.client_secret;
+var redirect_uri = config.redirect_uri;
+var querystring = require('querystring');
+var request = require('request');
+var uuid = require('uuid');
+var stateKey = 'spotify_auth_state';
+
+var mongoose = require('mongoose');
+var Song = mongoose.model('Songs');
+
+var indexCtrl = require('../controllers/index');
+var genresCtrl = require('../controllers/genres');
+
+/* GET home page. */
+// TODO: Do something for validating already logged-in users => Cookies?
+router.get('/', function(req, res, next) {
+  res.render('index', {});
+});
+
+router.get('/genres', function(req, res, next) {
+  genresCtrl.getGenres().then(function(genres) {
+    // console.log(genres);
+    // var dashedGenres = [];
+    // genres.forEach(function(genre) {
+    //   dashedGenres.push(genre.replace(/\s+/g, '-'));
+    // });
+
+    res.render('genres', { genres: genres }); // TODO: Include non-dashed genres
+  }, function(err) {
+    console.error(err);
+  });
+});
+
+router.get('/genre', function(req, res, next) {
+  var genre = req.query.genre.replace(/-/g, ' ');
+  console.log(genre);
+
+  Song.find({
+    genres: genre
+  }, function(err, songs) {
+    console.log(songs);
+
+    res.json(songs.map(function(song) {
+      return song.trackId;
+    }));
+  });
+});
+
+router.get('/login', function(req, res, next) {
+  var state = uuid.v1();
+  res.cookie(stateKey, state);
+
+  var scope = 'user-top-read';
+  res.redirect('https://accounts.spotify.com/authorize?' +
+    querystring.stringify({
+      response_type: 'code',
+      client_id: client_id,
+      scope: scope,
+      redirect_uri: redirect_uri,
+      state: state
+    }));
+});
+
+router.get('/callback', function(req, res) {
+  // your application requests refresh and access tokens
+  // after checking the state parameter
+  var code = req.query.code || null;
+  var state = req.query.state || null;
+  var storedState = req.cookies ? req.cookies[stateKey] : null;
+
+  if (state === null || state !== storedState) {
+    res.redirect('/#' +
+      querystring.stringify({
+        error: 'state_mismatch'
+      }));
+  } else {
+    res.clearCookie(stateKey);
+    var authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form: {
+        code: code,
+        redirect_uri: redirect_uri,
+        grant_type: 'authorization_code'
+      },
+      headers: {
+        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+      },
+      json: true
+    };
+
+    request.post(authOptions, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+
+        var access_token = body.access_token,
+            refresh_token = body.refresh_token;
+
+        var options = {
+          url: 'https://api.spotify.com/v1/me',
+          headers: { 'Authorization': 'Bearer ' + access_token },
+          json: true
+        };
+
+        // access to user info
+        var requestPromise = new Promise(function(resolve, reject) {
+          request.get(options, function(error, response, body) {
+            console.log('in req');
+            if (error) { reject(error) };
+
+            indexCtrl.updateDb(body.id, access_token)
+              .then(function(response) {
+                resolve(response);
+              });
+          });
+        });
+
+        requestPromise.then(function(result) {
+          console.log(result);
+          res.redirect('/genres');
+        }, function(err) {
+          console.error('Failed to update db');
+        });
+
+        // we can also pass the token to the browser to make requests from there
+        // res.redirect('/genres');
+      } else {
+        res.redirect('/#' +
+          querystring.stringify({
+            error: 'invalid_token'
+          }));
+      }
+    });
+  }
+});
+
+module.exports = router;

@@ -1,0 +1,13 @@
+<h1>GENRES</h1>
+<div class="genres" id="genres">
+  {{#each genres}}
+    {{#each this}}
+      <div id="{{@key}}" class="{{this}} genre-text"></div>
+    {{/each}}
+  {{/each}}
+</div>
+
+<script src='/javascripts/http.js/http.min.js'></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" canvas="genresCanvas" src="/javascripts/genres.js"></script>
+<!-- script type="text/paperscript" src="/javascripts/genresPaper.js" canvas="genresCanvas"></script -->

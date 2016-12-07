@@ -1,0 +1,31 @@
+{
+  "name": "mmixer",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "build-css": "./bin/build-css",
+    "watch-css": "./bin/watch-css"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.2",
+    "config.json": "0.0.4",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "express": "~4.14.0",
+    "fastpriorityqueue": "^0.1.0",
+    "hbs": "~4.0.1",
+    "mongoose": "^4.6.5",
+    "morgan": "~1.7.0",
+    "querystring": "^0.2.0",
+    "request": "^2.78.0",
+    "serve-favicon": "~2.3.0",
+    "uuid": "^2.0.3"
+  },
+  "devDependencies": {
+    "browser-request": "^0.3.3",
+    "jshint": "^2.9.4",
+    "node-sass": "^3.13.0",
+    "nodemon": "^1.11.0"
+  }
+}
