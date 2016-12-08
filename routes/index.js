@@ -3,17 +3,21 @@ var router = express.Router();
 var config = require('config.json')('./config.json');
 var client_id = config.client_id;
 var client_secret = config.client_secret;
-var redirect_uri = config.redirect_uri;
 var querystring = require('querystring');
 var request = require('request');
 var uuid = require('uuid');
 var stateKey = 'spotify_auth_state';
+var redirect_uri = config.redirect_uri;
 
 var mongoose = require('mongoose');
 var Song = mongoose.model('Songs');
 
 var indexCtrl = require('../controllers/index');
 var genresCtrl = require('../controllers/genres');
+
+if (process.env.NODE_ENV == 'PRODUCTION') {
+  redirect_uri = config.prod_redirect_uri;
+}
 
 /* GET home page. */
 // TODO: Do something for validating already logged-in users => Cookies?
