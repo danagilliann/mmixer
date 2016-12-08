@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start-nodemon": "nodemon ./bin/www",
-    "start": "node ./bin/www",
+    "prod": "NODE_ENV=PRODUCTION ./bin/www",
+    "start": "nodemon ./bin/www",
     "build-css": "./bin/build-css",
     "watch-css": "./bin/watch-css"
   },
