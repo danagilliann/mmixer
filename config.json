@@ -1,0 +1,6 @@
+{
+  "dbconf": "mongodb://heroku_nrkxts9n:mghj3dlpoemrkhtdumu53lmfge@ds127988.mlab.com:27988/heroku_nrkxts9n",
+  "client_id": "6a0bd8e6d14a44ef8bd19e015e4d4d22",
+  "client_secret": "1202c6b3b1984417aceda69792331658",
+  "redirect_uri": "http://localhost:3000/callback"
+}
