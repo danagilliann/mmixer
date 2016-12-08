@@ -9,6 +9,7 @@ recent songs people have been listening to.
 text](https://github.com/nyu-csci-ua-0480-001-fall-2016/dgl264-final-project/blob/master/projImg/wireframe.JPG)
 
 # Requirements
+- SpinKit (+2)
 - Spotify API (+5)
   - [Get current user profile](https://developer.spotify.com/web-api/get-current-users-profile/)
   - [Get track](https://developer.spotify.com/web-api/get-track/), for the track `id`

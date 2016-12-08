@@ -46,38 +46,79 @@ function setGenreListener() {
   var circles = document.getElementsByTagName('circle');
 
   for (var i = 0; i < circles.length; ++i) {
-    circles[i].addEventListener('click', getRequest);
+    circles[i].addEventListener('click', getGenre);
   }
 }
 
+function getGenre(event) {
+  document.getElementById('genres').style.display = 'none';
+  document.getElementById('title').innerHtml = event.target.id;
+
+  addLoadingBar();
+
+  getRequest(event)
+    .then(function(trackIds) {
+      return createGenrePage(trackIds);
+    }, function(err) {
+      console.log(err);
+    })
+    .then(function(iframeDiv) {
+      iframeDiv.style.display = 'none';
+      document.getElementById('body').appendChild(iframeDiv);
+      window.setTimeout(hideLoadingBar, 3000);
+
+      // return iframeDiv;
+      // iframeDiv.style.display = 'block';
+      window.setTimeout(function() {
+        showIframes(iframeDiv);
+      }, 3000);
+    })
+}
+
+function showIframes(iframeDiv) {
+  iframeDiv.style.display = 'block';
+}
+
 function getRequest(event) {
-  var url = '/genre?genre=' + event.target.id;
-  console.log(event.target.id);
+  return new Promise(function(resolve, reject) {
+    var url = '/genre?genre=' + event.target.id;
+    console.log(event.target.id);
 
-  http.get({
-    url: url,
-    onload: function() {
-      var trackIds = JSON.parse(this.responseText);
-
-      createGenrePage(trackIds);
-    },
-    onerror: function() {
-      console.log('Failed to get /genre');
-    }
+    http.get({
+      url: url,
+      onload: function() {
+        resolve(JSON.parse(this.responseText));
+      },
+      onerror: function() {
+        reject('Failed to get /genre');
+      }
+    });
   });
 }
 
 function createGenrePage(trackIds) {
-  document.getElementById('genres').style.display = 'none';
+  console.log('in createGenrePage');
   var iframeDiv = createIframeDiv();
-  document.getElementById('body').appendChild(iframeDiv);
+  // document.getElementById('body').appendChild(iframeDiv);
 
   trackIds.forEach(function(trackId) {
-    var iframePlayer = createIframePlayer(trackId);
-    iframePlayer.className += 'player';
+    // var iframePlayer = createIframePlayer(trackId);
+    // iframePlayer.className += 'player';
 
     iframeDiv.appendChild(createIframePlayer(trackId));
   });
+
+  return iframeDiv;
+}
+
+function hideLoadingBar() {
+  var spinner = document.getElementById('spinner');
+  spinner.style.display = 'none';
+}
+
+function addLoadingBar() {
+  var spinner = document.getElementById('spinner');
+  spinner.style.display = 'block';
 }
 
 function createIframeDiv() {
@@ -93,6 +134,7 @@ function createIframePlayer(trackId) {
   iframe.width = '300';
   iframe.height = '380';
   iframe.setAttribute('allowtransparency', 'true');
+  iframe.className += 'player';
 
   return iframe;
 }

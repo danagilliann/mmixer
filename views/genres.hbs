@@ -1,4 +1,11 @@
-<h1>GENRES</h1>
+<h1 id="title">GENRES</h1>
+<div class="spinner" id="spinner">
+  <div class="rect1"></div>
+  <div class="rect2"></div>
+  <div class="rect3"></div>
+  <div class="rect4"></div>
+  <div class="rect5"></div>
+</div>
 <div class="genres" id="genres">
   {{#each genres}}
     {{#each this}}
@@ -7,6 +14,7 @@
   {{/each}}
 </div>
 
+<script src='/javascripts/progressbar.js/dist/progressbar.min.js'></script>
 <script src='/javascripts/http.js/http.min.js'></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript" canvas="genresCanvas" src="/javascripts/genres.js"></script>
