@@ -71,6 +71,7 @@ function getGenre(event) {
     })
     .then(function(iframeDiv) {
       var title = document.getElementById('title');
+      console.log(iframeDiv);
       iframeDiv.style.display = 'none';
 
       title.classList.add('fadeInDown');
@@ -121,6 +122,8 @@ function createGenrePage(trackIds) {
 
     iframeDiv.appendChild(createIframePlayer(trackId));
   });
+
+  console.log('iframe div', iframeDiv);
 
   return iframeDiv;
 }
