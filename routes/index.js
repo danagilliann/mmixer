@@ -41,15 +41,17 @@ router.get('/genres', function(req, res, next) {
 });
 
 router.get('/api/genre', function(req, res, next) {
-  console.log('req.query.genre == ', req.query.genre);
-  var genre = req.query.genre.replace(/-/g, ' ');
-  genre = req.query.genre.replace(/%26/, '&');
-  console.log('genre!', genre);
+  var genre = req.query.genre.replace(/%26/, '&');
+  console.log(genre);
+
+  genre = req.query.genre.replace(/-/g, ' ');
+
+  console.log(genre);
 
   Song.find({
     genres: genre
   }, function(err, songs) {
-    // console.log(songs);
+    console.log(songs);
 
     res.json(songs.map(function(song) {
       return song.trackId;
