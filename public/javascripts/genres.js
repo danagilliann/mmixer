@@ -95,19 +95,35 @@ function showIframes(iframeDiv) {
 
 function getRequest(event) {
   return new Promise(function(resolve, reject) {
+    var req = new XMLHttpRequest();
     var url = '/api/genre?genre=' + encodeURIComponent(event.target.id);
 
     console.log('url', url);
 
-    request(url, function(err, res, body) {
-      if (err) {
+    req.open('GET', url);
+
+    req.onload = function() {
+      if (req.status == 200) {
+        resolve(JSON.parse(req.response));
+      } else {
         reject('Failed to get /genre');
       }
+    };
 
-      if (res.status === 200) {
-        resolve(JSON.parse(body));
-      }
-    });
+    req.onerror = function() {
+      reject(Error("Network Error"));
+    };
+
+    req.send();
+    // request(url, function(err, res, body) {
+    //   if (err) {
+    //     reject('Failed to get /genre');
+    //   }
+
+    //   if (res.status === 200) {
+    //     resolve(JSON.parse(body));
+    //   }
+    // });
   });
 }
 
