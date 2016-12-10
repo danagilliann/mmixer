@@ -113,7 +113,7 @@ function getRequest(event) {
     req.onerror = function() {
       reject(Error("Network Error"));
     };
-
+// hi
     req.send();
     // request(url, function(err, res, body) {
     //   if (err) {
