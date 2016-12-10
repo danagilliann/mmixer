@@ -11,6 +11,7 @@ function Genre(genre, count) {
 function getGenres() {
   console.log('in getGenres');
   return new Promise(function(resolve, reject) {
+    console.log('in promise');
     Song.find({}, function(err, songs, count) {
       console.log('found some songs');
       if (err) {
