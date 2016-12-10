@@ -50,11 +50,18 @@ function setGenreListener() {
   }
 }
 
-function getGenre(event) {
-  document.getElementById('genres').style.display = 'none';
-  document.getElementById('title').innerHtml = event.target.id;
+function fadeOutCircles() {
+  console.log('fadingout');
+  var genres = document.getElementById('genres');
+  genres.classList.add('bounceOutRight');
+}
 
-  addLoadingBar();
+function getGenre(event) {
+  fadeOutCircles();
+  window.setTimeout(function() {
+    document.getElementById('genres').style.display = 'none';
+    addLoadingBar();
+  }, 500);
 
   getRequest(event)
     .then(function(trackIds) {
@@ -63,34 +70,41 @@ function getGenre(event) {
       console.log(err);
     })
     .then(function(iframeDiv) {
+      var title = document.getElementById('title');
       iframeDiv.style.display = 'none';
-      document.getElementById('body').appendChild(iframeDiv);
-      window.setTimeout(hideLoadingBar, 3000);
 
-      // return iframeDiv;
-      // iframeDiv.style.display = 'block';
+      title.classList.add('fadeInDown');
+      title.innerHTML = event.target.id.replace(/-/g, ' ').toUpperCase();
+
+      document.getElementById('body').appendChild(iframeDiv);
+
       window.setTimeout(function() {
+        document.getElementById('back').style.display = 'block';
+        hideLoadingBar();
         showIframes(iframeDiv);
       }, 3000);
-    })
+    });
 }
 
 function showIframes(iframeDiv) {
+  iframeDiv.classList.add('animated');
+  iframeDiv.classList.add('rotateInUpLeft');
   iframeDiv.style.display = 'block';
 }
 
 function getRequest(event) {
   return new Promise(function(resolve, reject) {
-    var url = '/genre?genre=' + event.target.id;
-    console.log(event.target.id);
+    var url = '/api/genre?genre=' + encodeURIComponent(event.target.id);
 
-    http.get({
-      url: url,
-      onload: function() {
-        resolve(JSON.parse(this.responseText));
-      },
-      onerror: function() {
+    console.log('url', url);
+
+    request(url, function(err, res, body) {
+      if (err) {
         reject('Failed to get /genre');
+      }
+
+      if (res.status === 200) {
+        resolve(JSON.parse(body));
       }
     });
   });
@@ -185,6 +199,12 @@ function populatePageCircle(circleArr) {
     pageCircle.setAttribute('r', circle.r);
     pageCircle.id = circle.text.text;
 
+    pageCircle.classList.add('genre');
+    pageCircle.classList.add('animated');
+    pageCircle.classList.add('wobble');
+    pageCircle.classList.add('bounceInLeft');
+
+
     genresSvg.appendChild(pageCircle);
   });
 }
@@ -201,6 +221,11 @@ function populatePageText(circlesArr) {
     genreText.setAttributeNS(null, 'text-anchor', 'middle');
     genreText.setAttributeNS(null, 'fill', circle.text.color);
     genreText.innerHTML = circle.text.text;
+
+    genreText.classList.add('genre');
+    genreText.classList.add('animated');
+    genreText.classList.add('bounceInLeft');
+    genreText.classList.add('shake');
 
     genreSvg.appendChild(genreText);
   });

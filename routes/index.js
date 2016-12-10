@@ -26,6 +26,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/genres', function(req, res, next) {
+  console.log(req.headers.cookie);
   genresCtrl.getGenres().then(function(genres) {
     // console.log(genres);
     // var dashedGenres = [];
@@ -39,14 +40,16 @@ router.get('/genres', function(req, res, next) {
   });
 });
 
-router.get('/genre', function(req, res, next) {
+router.get('/api/genre', function(req, res, next) {
+  console.log('req.query.genre == ', req.query.genre);
   var genre = req.query.genre.replace(/-/g, ' ');
-  console.log(genre);
+  genre = req.query.genre.replace(/%26/, '&');
+  console.log('genre!', genre);
 
   Song.find({
     genres: genre
   }, function(err, songs) {
-    console.log(songs);
+    // console.log(songs);
 
     res.json(songs.map(function(song) {
       return song.trackId;
@@ -77,11 +80,14 @@ router.get('/callback', function(req, res) {
   var storedState = req.cookies ? req.cookies[stateKey] : null;
 
   if (state === null || state !== storedState) {
+    console.log('state === null || state !== storedState');
+
     res.redirect('/#' +
       querystring.stringify({
         error: 'state_mismatch'
       }));
   } else {
+    console.log('success');
     res.clearCookie(stateKey);
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
@@ -98,6 +104,7 @@ router.get('/callback', function(req, res) {
 
     request.post(authOptions, function(error, response, body) {
       if (!error && response.statusCode === 200) {
+        console.log('success post request');
 
         var access_token = body.access_token,
             refresh_token = body.refresh_token;
