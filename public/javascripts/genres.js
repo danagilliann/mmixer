@@ -73,7 +73,7 @@ function getGenre(event) {
       var title = document.getElementById('title');
       iframeDiv.style.display = 'none';
 
-      title.classList.add('fadeInDownBig');
+      title.classList.add('fadeInDown');
       title.innerHTML = event.target.id.replace(/-/g, ' ').toUpperCase();
 
       document.getElementById('body').appendChild(iframeDiv);

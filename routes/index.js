@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/genres', function(req, res, next) {
-  console.log(req.headers.cookie);
+  console.log('in /genres');
   genresCtrl.getGenres().then(function(genres) {
     // console.log(genres);
     // var dashedGenres = [];
