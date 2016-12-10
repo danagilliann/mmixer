@@ -12,6 +12,7 @@ function getGenres() {
   console.log('in getGenres');
   return new Promise(function(resolve, reject) {
     Song.find({}, function(err, songs, count) {
+      console.log('found some songs');
       if (err) {
         reject(Error(err));
       } else {
