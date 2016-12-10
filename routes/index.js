@@ -28,7 +28,7 @@ router.get('/', function(req, res, next) {
 router.get('/genres', function(req, res, next) {
   console.log('in /genres');
   genresCtrl.getGenres().then(function(genres) {
-    // console.log(genres);
+    console.log('finished getting genres');
     // var dashedGenres = [];
     // genres.forEach(function(genre) {
     //   dashedGenres.push(genre.replace(/\s+/g, '-'));
