@@ -9,6 +9,7 @@ function Genre(genre, count) {
 }
 
 function getGenres() {
+  console.log('in getGenres');
   return new Promise(function(resolve, reject) {
     Song.find({}, function(err, songs, count) {
       if (err) {
@@ -21,19 +22,19 @@ function getGenres() {
   });
 }
 
-function _getGenresPQ(genresObj) {
+function _getGenresPQ(songs) {
   var pq = new PriorityQueue(function(a, b) { return a.count > b.count } ); // max-heap
 
-  for (var key in genresObj) {
-    pq.add(new Genre(key, genresObj[key]));
+  for (var song in songs) {
+    pq.add(new Genre(song., genresObj[key]));
   }
 
   return pq;
 }
 
 function _getGenres(songs) {
-  var genresObj = _getGenresObj(songs);
-  var genrePQ = _getGenresPQ(genresObj);
+  // var genresObj = _getGenresObj(songs);
+  var genrePQ = _getGenresPQ(songs);
   var genresArr = _getGenresArr(genrePQ);
 
   return genresArr;
@@ -62,9 +63,9 @@ function _getGenresObj(songs) {
       genre = genre.replace(/\s+/g, '-');
 
       if (genresObj.hasOwnProperty(genre)) {
-        genresObj[genre] = genresObj[genre] + 1;
+        genresObj[genre] = genresObj[genre] + song.popularity;
       } else {
-        genresObj[genre] = 1;
+        genresObj[genre] = song.popularity;
       }
     });
   });
