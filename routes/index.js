@@ -131,7 +131,7 @@ router.get('/callback', function(req, res) {
         });
 
         requestPromise.then(function(result) {
-          console.log(result);
+          console.log('result of requestPromise', result);
           res.redirect('/genres');
         }, function(err) {
           console.error('Failed to update db');
