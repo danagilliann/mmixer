@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Songs = require('../models/songs').Songs;
 var Users = require('../models/users').User;
+var Genres = require('../models/genres').Genres;
 
 // is the environment variable, NODE_ENV, set to PRODUCTION? 
 if (process.env.NODE_ENV == 'PRODUCTION') {

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('Users');
 var Song = mongoose.model('Songs');
+var Genre = mongoose.model('Genres');
 var request = require('request');
 // var db = require('./controllers/db');
 
@@ -13,8 +14,72 @@ function updateDb(userId, token) {
     }).then(function(tracks) {
       console.log('will updateSongs');
       _updateSongs(tracks, userId);
+      _updateGenres(tracks);
       resolve('successfully updated');
     });
+  });
+}
+
+function _updateGenres(tracks) {
+  console.log('in updateGenres');
+  for (var i in tracks) {
+    console.log("tracks ", tracks[i]);
+    for (var j in tracks[i].genres) { // It's fine. Genres cap off at 10
+      _updateGenresDb(tracks[i].genres[j], tracks[i].trackName, tracks[i].trackId);
+    }
+  }
+}
+
+function _updateGenresDb(genreName, trackName, trackId) {
+  console.log('in updateGenresDb');
+  var tracksObj = {};
+
+  Genre.findOne({ name: genreName }, function(err, genre) {
+    if (genre === null) {
+      tracksObj.name = trackName;
+      tracksObj.trackId = trackId;
+
+      var newGenre = new Genre({
+        name: genreName,
+        popularity: 1,
+        tracks: [ tracksObj ]
+      });
+
+      newGenre.save(function(err, genre) {
+        if (err) {
+          console.error("Error in saving new Genre", err);
+        } else {
+          console.log("Successfully saved new Genre", genre.name);
+          // mongoose.disconnect(); // TODO: Maybe remove this?
+        }
+      });
+    } else {
+      genre.popularity = genre.popularity + 1;
+
+      genre.tracks.forEach(function(trackObj) {
+        if (trackObj.id === trackId) {
+          return;
+        }
+      });
+      // for (var track in genre.tracks) {
+      //   if (track.id == trackId) {
+      //     return;
+      //   }
+      // }
+
+      tracksObj.name = trackName;
+      tracksObj.trackId = trackId;
+
+      genre.tracks.push(tracksObj);
+
+      genre.save(function(err, genre) {
+        if (err) {
+          console.log("Problem in updating genre");
+        } else {
+          console.log("Succcessfully updated genre", genre.name);
+        }
+      });
+    }
   });
 }
 
@@ -113,6 +178,7 @@ function _getTracks(userId, token) {
       }
     };
 
+    // gets user's top tracks
     request(options, function(err, res, body) {
       if (err) {
         reject(Error(err));
@@ -121,8 +187,9 @@ function _getTracks(userId, token) {
         var items = info.items;
         var tracksArr = [];
 
+        // gets an array of object tracks
         _genTracksObj(1, 11, items, tracksArr).then(function(response) {
-          // console.log('genTracksObj resolved');
+          console.log('genTracksObj resolved');
           resolve(response);
         }, function(err) {
           console.error('genTracksObj gave err', err);
@@ -135,10 +202,10 @@ function _getTracks(userId, token) {
 function _genTracksObj(start, end, items, tracksArr) {
   return new Promise(function(resolve, reject) {
     if (start === end) {
-      // console.log('Finished finding tracks');
+      console.log('Finished finding tracks');
       resolve(tracksArr);
     } else {
-      // console.log('Currently retrieving genre');
+      console.log('Currently retrieving genre');
       var artistIds = _getArtistIds(items[start].artists);
 
       _getGenres(artistIds).then(function(response) {
