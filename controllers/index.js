@@ -13,73 +13,127 @@ function updateDb(userId, token) {
       return tracks;
     }).then(function(tracks) {
       console.log('will updateSongs');
-      _updateSongs(tracks, userId);
-      _updateGenres(tracks);
-      resolve('successfully updated');
+      // _updateSongs(tracks, userId);
+      _updateGenres(tracks, userId).then(function(genreRes) {
+        resolve(genreRes);
+      }, function(err) {
+        console.log(err);
+      });
     });
   });
 }
 
-function _updateGenres(tracks) {
-  console.log('in updateGenres');
-  for (var i in tracks) {
-    console.log("tracks ", tracks[i]);
-    for (var j in tracks[i].genres) { // It's fine. Genres cap off at 10
-      _updateGenresDb(tracks[i].genres[j], tracks[i].trackName, tracks[i].trackId);
-    }
-  }
+function _updateGenres(tracks, userId) {
+  return new Promise(function(resolve, reject) {
+    tracks.forEach(function(track) {
+      track.genres.forEach(function(genre) {
+      // for (var ind in track.genres) {
+        _updateGenresDb(genre, track.trackName, track.trackId, userId)
+          .then(function() {
+            return;
+          });
+      });
+    });
+    resolve('Success in updating genres db');
+  });
+
+  // return new Promise(function(resolve, reject) {
+  //   return tracks.forEach(function(track) {
+  //     return track.genres.reduce(function(sequence, genre) {
+  //       console.log('current genre', genre);
+  //       return sequence.then(function() {
+  //         return _updateGenresDb(genre, track.trackName, track.trackId, userId);
+  //       }).then(function(message) {
+  //         console.log(message);
+  //     }, Promise.resolve());
+  //   }).then(function() {
+  //     resolve('updated genres');
+  //   }).catch(function(err) {
+  //     console.log('Error happened while attempting to populate Genres Db', err);
+  //     reject(err);
+  //   });
+  // });
 }
 
-function _updateGenresDb(genreName, trackName, trackId) {
-  console.log('in updateGenresDb');
-  var tracksObj = {};
+function _updateGenresDb(genreName, trackName, trackId, userId) {
+  return new Promise(function(resolve, reject) {
+    console.log('in updateGenresDb for ', genreName);
+    var tracksObj = {};
+    tracksObj.name = trackName;
+    tracksObj.trackId = trackId;
 
-  Genre.findOne({ name: genreName }, function(err, genre) {
-    if (genre === null) {
-      tracksObj.name = trackName;
-      tracksObj.trackId = trackId;
-
-      var newGenre = new Genre({
-        name: genreName,
-        popularity: 1,
-        tracks: [ tracksObj ]
-      });
-
-      newGenre.save(function(err, genre) {
+    Genre.findOneAndUpdate(
+      { name: genreName },
+      {
+        $inc: { popularity: 1 },
+        $addToSet: {
+          tracks: tracksObj, // TODO: Maybe fix this? To avoid dups
+          users: userId
+        }
+      },
+      { upsert: true },
+      function(err) {
         if (err) {
-          console.error("Error in saving new Genre", err);
+          reject(err);
         } else {
-          console.log("Successfully saved new Genre", genre.name);
-          // mongoose.disconnect(); // TODO: Maybe remove this?
+          resolve('Successfully updated db');
         }
-      });
-    } else {
-      genre.popularity = genre.popularity + 1;
+      }
+    );
 
-      genre.tracks.forEach(function(trackObj) {
-        if (trackObj.id === trackId) {
-          return;
-        }
-      });
-      // for (var track in genre.tracks) {
-      //   if (track.id == trackId) {
-      //     return;
-      //   }
-      // }
+    // Genre.findOne({ name: genreName }, function(err, genre) {
+    //   // console.log(genre);
+    //   if (genre === null) {
+    //     tracksObj.name = trackName;
+    //     tracksObj.trackId = trackId;
 
-      tracksObj.name = trackName;
-      tracksObj.trackId = trackId;
+    //     var newGenre = new Genre({
+    //       name: genreName,
+    //       popularity: 1,
+    //       tracks: [ tracksObj ],
+    //       users: [ userId ]
+    //     });
 
-      genre.tracks.push(tracksObj);
+    //     newGenre.save(function(err, genre) {
+    //       if (err) {
+    //         reject("Error in saving new Genre");
+    //       } else {
+    //         mongoose.disconnect(); // TODO: Maybe remove this?
+    //         resolve("Successfully saved new Genre " + genre.name);
+    //       }
+    //     });
+    //   } else {
+    //     console.log('in else');
+    //     // if (genre.users.includes(userId)) {
+    //     //   mongoose.disconnect();
+    //     //   resolve('found duplicate user, leaving');
+    //     // }
 
-      genre.save(function(err, genre) {
-        if (err) {
-          console.log("Problem in updating genre");
-        } else {
-          console.log("Succcessfully updated genre", genre.name);
-        }
-      });
-    }
+    //     genre.popularity = genre.popularity + 1;
+
+    //     genre.tracks.forEach(function(trackObj) {
+    //       if (trackObj.id === trackId) {
+    //         mongoose.disconnect();
+    //         resolve('found same track');
+    //       }
+    //     });
+
+    //     tracksObj.name = trackName;
+    //     tracksObj.trackId = trackId;
+
+    //     genre.users.push(userId);
+    //     genre.tracks.push(tracksObj);
+
+    //     genre.save(function(err, genre) {
+    //       if (err) {
+    //         reject("Problem in updating genre");
+    //       } else {
+    //         mongoose.disconnect();
+    //         resolve("Succcessfully updated genre");
+    //       }
+    //     });
+    //   }
+    // });
   });
 }
 
