@@ -9,6 +9,12 @@ var Genre = mongoose.model('Genres');
 //   this.count = count;
 // }
 
+function getGenre() {
+  Song.find({}, (err, songs) => {
+    console.log(songs);
+  });
+}
+
 function getGenres() {
   console.log('in getGenres');
   return new Promise(function(resolve, reject) {
@@ -21,7 +27,7 @@ function getGenres() {
         genreArr.push(genreCountObj);
       }
       console.log('genreArr ', genreArr);
-      mongoose.disconnect();
+      // mongoose.disconnect();
       resolve(genreArr);
     });
 
@@ -29,5 +35,6 @@ function getGenres() {
 }
 
 module.exports = {
-  getGenres: getGenres
+  getGenres: getGenres,
+  getGenre: getGenre
 };

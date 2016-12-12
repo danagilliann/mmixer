@@ -161,9 +161,9 @@ function _updateSongsDb(songId, trackObj, userId, trackInd) {
           console.error('Error in saving new Song', err);
         } else {
           console.log('Successfully saved new song', song.trackId);
-          if (trackInd === 9) { // prevent early disconnection
-            mongoose.disconnect();
-          }
+          // if (trackInd === 9) { // prevent early disconnection
+          //   mongoose.disconnect();
+          // }
         }
       });
     } else {
@@ -178,7 +178,7 @@ function _updateSongsDb(songId, trackObj, userId, trackInd) {
             console.error('Error in updating song'); // TODO: Test this by pre-populating song
           } else {
             console.log('Successfully updated song', song.trackId);
-            mongoose.disconnect();
+            // mongoose.disconnect();
           }
         });
       }
@@ -201,7 +201,7 @@ function _updateUser(tracks, userId, token) {
           console.log('Error in saving newUser', err);
         } else {
           console.log('Successfully saved newUser!\n', user.spotifyId);
-          mongoose.disconnect();
+          // mongoose.disconnect();
         }
       }, function(err) {
         console.error("Promise getTracks failed", err);
@@ -216,7 +216,7 @@ function _updateUser(tracks, userId, token) {
           console.log('Error in updating incoming user!\n', err);
         } else {
           console.log('Successfully updated incoming user', modifiedUser.spotifyId);
-          mongoose.disconnect();
+          // mongoose.disconnect();
         }
       });
     }

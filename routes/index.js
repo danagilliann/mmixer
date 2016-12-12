@@ -47,6 +47,13 @@ router.get('/api/genre', function(req, res, next) {
   genre = req.query.genre.replace(/-/g, ' ');
 
   console.log('attempting to find', genre);
+// Songs.find({}, (err, songs) => {
+//   console.log(songs);
+// });
+// 
+// console.log('please');
+
+  // genresCtrl.getGenre();
   Songs.find({
     genres: genre
   }, function(err, songs, count) {
