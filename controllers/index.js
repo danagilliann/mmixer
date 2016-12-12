@@ -13,7 +13,7 @@ function updateDb(userId, token) {
       return tracks;
     }).then(function(tracks) {
       console.log('will updateSongs');
-      // _updateSongs(tracks, userId);
+      _updateSongs(tracks, userId);
       _updateGenres(tracks, userId).then(function(genreRes) {
         resolve(genreRes);
       }, function(err) {

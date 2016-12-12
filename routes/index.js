@@ -10,7 +10,8 @@ var stateKey = 'spotify_auth_state';
 var redirect_uri = config.redirect_uri;
 
 var mongoose = require('mongoose');
-var Song = mongoose.model('Songs');
+var Songs = mongoose.model('Songs');
+var Genres = mongoose.model('Genres');
 
 var indexCtrl = require('../controllers/index');
 var genresCtrl = require('../controllers/genres');
@@ -33,6 +34,7 @@ router.get('/genres', function(req, res, next) {
     // genres.forEach(function(genre) {
     //   dashedGenres.push(genre.replace(/\s+/g, '-'));
     // });
+    console.log(genres);
 
     res.render('genres', { genres: genres }); // TODO: Include non-dashed genres
   }, function(err) {
@@ -42,18 +44,17 @@ router.get('/genres', function(req, res, next) {
 
 router.get('/api/genre', function(req, res, next) {
   var genre = req.query.genre.replace(/%26/, '&');
-  console.log(genre);
-
   genre = req.query.genre.replace(/-/g, ' ');
 
-  console.log(genre);
-
-  Song.find({
+  console.log('attempting to find', genre);
+  Songs.findOne({
     genres: genre
-  }, function(err, songs) {
-    console.log(songs);
+  }, function(err, songs, count) {
+    console.log('count', count);
+    console.log('songs', songs);
 
     res.json(songs.map(function(song) {
+      console.log('hello ', song);
       return song.trackId;
     }));
   });

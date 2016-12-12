@@ -65,6 +65,7 @@ function getGenre(event) {
 
   getRequest(event)
     .then(function(trackIds) {
+      console.log('successfully got genres');
       return createGenrePage(trackIds);
     }, function(err) {
       console.log(err);
@@ -103,9 +104,11 @@ function getRequest(event) {
     req.open('GET', url);
 
     req.onload = function() {
-      if (req.status == 200) {
+      if (req.status === 200) {
+        console.log('Got 200');
         resolve(JSON.parse(req.response));
       } else {
+        console.log('FML');
         reject('Failed to get /genre');
       }
     };
@@ -113,7 +116,7 @@ function getRequest(event) {
     req.onerror = function() {
       reject(Error("Network Error"));
     };
-// hi
+
     req.send();
     // request(url, function(err, res, body) {
     //   if (err) {
@@ -201,7 +204,7 @@ function generateCircles(arr) {
       x = 0;
     }
 
-    var circle = new Circle((x += (40 + random)), y, (150 + (2 * genre.count)), new Text('24', 'Droid Sans Mono', genre.genre, 'white'));
+    var circle = new Circle((x += (40 + random)), y, (150 + (0.5 * genre.count)), new Text('24', 'Droid Sans Mono', genre.genre, 'white'));
     circleArr.push(circle);
   });
 
