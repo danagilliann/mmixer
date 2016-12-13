@@ -4,6 +4,8 @@ As someone who frequently listens to music, I want to discover more song. The
 idea behind M.M.I.X.E.R (pronounced "mixer") is to find new music based on the
 recent songs people have been listening to.
 
+# [Live Site](http://protected-coast-49677.herokuapp.com)
+
 # Wireframe and Site Map
 ![alt
 text](https://github.com/nyu-csci-ua-0480-001-fall-2016/dgl264-final-project/blob/master/projImg/wireframe.JPG)
